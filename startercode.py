@@ -239,7 +239,7 @@ def recommend_breeds_in_same_group(breed_name, cache_file):
         return f"'{breed_name}' is not in the cache."
     
     if target_group is None:
-        f"No group information available for '{breed_name}'."
+        return f"No group information available for '{breed_name}'."
 
     recommendations = []
 
