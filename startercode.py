@@ -108,7 +108,7 @@ def update_cache(breed_ids, cache_file):
     cache = load_json(cache_file)
     successful_new_adds = 0
 
-    for breed_id in breeds_ids:
+    for breed_id in breed_ids:
         url = f"https://dogapi.dog/api/v2/breeds/{breed_id}"
 
         if url not in cache:
