@@ -217,6 +217,50 @@ def recommend_breeds_in_same_group(breed_name, cache_file):
             "No recommendations found based on '{breed_name}'."  (no other breeds in that group)
     """
 
+    cache = load_json(cache_file)
+
+    if cache == {}:
+        return "No breed data found in cache."
+    
+    target_breed = None
+    target_group = None
+
+    for breed_info in cache.values():
+        try:
+            name = breed_info["data"]["attributes"]["name"]
+            if name.lower() == breed_name.lower():
+                target_breed = name
+                target_group = breed_info["data"]["relationships"]["group"]["data"]["id"]
+                break
+        except:
+            continue
+
+    if target_breed is None:
+        return f"'{breed_name}' is not in the cache."
+    
+    if target_group is None:
+        f"No group information available for '{breed_name}'."
+
+    recommendations = []
+
+    for breed_info in cache.values():
+        try:
+            name = breed_info["data"]["attributes"]["name"]
+            group_id = breed_info["data"]["relationships"]["group"]["data"]["id"]
+
+            if group_id == target_group and name.lower() != breed_name.lower():
+                recommendations.append(name)
+            
+        except:
+            continue
+
+    if recommendations == []:
+        return f"No recommendations found based on '{breed_name}'."
+    
+    recommendations.sort()
+    return recommendations
+
+
 
 class TestHomeworkDogAPI(unittest.TestCase):
     def setUp(self):
@@ -238,9 +282,8 @@ class TestHomeworkDogAPI(unittest.TestCase):
         # NOTE: By default we leave test files on disk so you can inspect the cache.
         # If you want the tests to clean up after themselves, UNCOMMENT the lines below.
         #
-        # if os.path.exists(self.test_cache_file):
-        #     os.remove(self.test_cache_file)
-        pass
+        if os.path.exists(self.test_cache_file):
+            os.remove(self.test_cache_file)
 
     # -------------------------
     # load_json / create_cache
